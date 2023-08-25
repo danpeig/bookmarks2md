@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bookmarks to Markdown</title>
+  <meta name="description" content="Bookmarks to MD">
+  <meta name="author" content="Daniel Brooke Peig">
+  <style>
+  /* The colors of the page were adjusted to display "hidden" white objects */
+        body {
+            font: 10pt Sans-Serif;
+        }		
+        p {
+            font: 9pt Serif;
+        }
+
+		.outputs {
+            font: 11pt Serif;
+        }
+        
+        table{
+            font: 9pt Serif;
+        }
+
+		textarea{
+			font: 10pt Monospace;
+            width: 100%;
+			height: 512px;
+        }
+		
+		.right {
+			text-align: right;
+		}
+	
+		.left {
+			width: 100%;
+			text-align: left;
+		}
+		
+		.highlight {
+		background-color: yellow;
+		}
+		
+		.green {
+			color: green;
+			font-weight: bold;
+		}
+		
+		.red {
+			color: red;
+			font-weight: bold;
+		}
+		
+		.bold {
+			font-weight: bold;
+		}
+		
+		.columns {
+			column-count: 2;
+			column-rule-style: solid;
+			column-rule-width: 1px;
+			-webkit-column-width: 500px; /* Chrome, Safari, Opera */
+			-moz-column-width: 500px; /* Firefox */
+			column-width: 500px;
+			background-color: #f0f0e1;
+			padding: 20px;
+		}
+		
+		.columnBlock {
+			-webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
+			page-break-inside: avoid; /* Firefox */
+            break-inside: avoid; /* IE 10+ */
+		}
+		
+		.hidden {
+			display: none;
+		}
+  </style>
+	<!-- Your style-sheets go here -->
+			
+	<!-- End of your page style-sheets-->
+</head>
+<body>
+	<div>
+	<h1>Bookmarks to Markdown</h1>
+	This tool converts the bookmarks HTML file exported from Browsers (Chrome, Firefox and others) to Markdown (md) format.<BR>
+	It runs from a plain HTML file: no installation, no extensions, no command line. Just the same browser you already used to export the list.<BR>
+	The tool is not working as expected? Contact the developer <a href="https://www.danbp.org">Daniel Brooke Peig</a>.<BR><BR>
+		<div class="columns">
+					<div class="columnBlock"><h3>1. Select and load one or more HTML bookmark files</h3>
+						<input type="file" id="fileinput" multiple/>&nbsp;
+						<input type="button" value="Reload the files" onClick="document.getElementById('fileinput').dispatchEvent(eVent);"/>
+					</div>
+					<div class="columnBlock"><h3>2. Convert the bookmarks</h3>
+						<input type="button" value="Convert" onClick="processHTML();"/>
+						<UL>
+							<li>Source files: <span id="fileCount" class="bold">N/A</span></li>
+							<li>Folders: <span id="folderCount" class="bold">N/A</span></li>
+							<li>Bookmarks: <span id="bookmarkCount" class="bold">N/A</span></li>
+						</UL>
+					</div>
+					<div class="columnBlock"><h3>3. Export the Markdown</h3>
+					<input type="button" value="Save as a file" onClick="exportMD();"/>
+					<input type="button" value="Copy to clipboard" onClick="copyMD();"/>
+					</div>
+		</div>
+	</div>
+	<BR><BR>
+		<div class="hidden" id="b2mdMDTitle">
+			<h1 id="b2mdMDHead">Final MD Markup</h1>
+			<HR>
+			<textarea id="b2mdMD" class="outputs"></textarea>
+			<HR>
+		</div>
+		<div class="hidden" id="b2mdOutputsTitle">
+			<h1 id="b2mdOutputHead">Source HTML bookmarks</h1>
+			<HR>
+			<div id="b2mdOutputs" class="outputs"></div>
+		</div>
+<script>
+// JavaScript extra debug code part 1
+//--------------------------------------------------------------------------------------------------------
+"use strict"; //Prevents the use of undeclared variables
+console.time("Runtime"); //Start the script timer
+//--------------------------------------------------------------------------------------------------------
+</script>
+
+<script >
+//
+//-------------------------------------------------------------------------------------------------------------
+// BOOKMARKS TO MD CONVERSION ENGINE
+//-------------------------------------------------------------------------------------------------------------
+// This Software was Developed by Daniel Brooke Peig
+// In case of any doubts please contact the developer at www.danbp.org
+// Copyright (c) 2023 Daniel Brooke Peig
+//-------------------------------------------------------------------------------------------------------------
+//
+//
+//
+//Turn on for verbose output for debug purposes
+let debug = false;
+
+/**
+ * Converts the Bookmarks Notation to MarkDown
+ * Please note that this function requires a DOM object and functions to work
+ * @param {object} source - The source DOM element containing the DT/DL tags
+ * @param {int} level - The depth level of the block
+ * @returns {string} - Formatted MD
+ */
+function b2md(source, level = 0) {
+  dest = "";
+  //Get links and titles first
+  for (let index in source.children) {
+    //Title
+    if (source.children[index].tagName == "H1") {
+      if (debug) console.log("Title: " + source.children[index].innerHTML);
+      dest += "# " + source.children[index].innerHTML + "\n";
+      //dest += "----\n";
+    }
+    //Links
+    else if (source.children[index].tagName == "DT") {
+      if (source.children[index].childElementCount > 0) {
+        if (source.children[index].children[0].tagName == "A") {
+          if (debug) console.log("Link: " + source.children[index].children[0].innerHTML);
+          dest +=
+            indent(level) +
+            "[" +
+            source.children[index].children[0].innerHTML +
+            "](" +
+            source.children[index].children[0].href +
+            ")\n";
+        }
+      }
+    }
+  }
+  //Get sub-folders
+  let foundHeader = false;
+  for (let index in source.children) {
+    if (source.children[index].tagName == "DT") {
+      //This is a sub-folder folder header
+      if (source.children[index].children[0].tagName == "H3") {
+        if (debug)
+          console.log("Sub-folder level " + (level + 1) + " header: " + source.children[index].children[0].innerHTML);
+        dest += indentHeader(level) + source.children[index].children[0].innerHTML + "\n";
+        foundHeader = true;
+      }
+      //This sub-folder has contents
+      if (source.children[index].childElementCount > 1)
+        if (source.children[index].children[1].tagName == "DL") {
+          if (foundHeader == true) {
+            level++;
+            foundHeader = false;
+          }
+          if (debug) console.log("Getting internal content from level " + level);
+          // Let's get the content from the sub-folder
+          dest += b2md(source.children[index].children[1], level);
+          level--;
+        }
+    }
+    //This is just a container, move down
+    if (source.children[index].tagName == "DL") {
+      if (debug) console.log("Nothing to do in this level, let's go to the next...");
+      dest += b2md(source.children[index], level);
+    }
+  }
+  return dest;
+}
+
+/**
+ * Creates indentation for links
+ * @param {int} level - The depth level of the block
+ * @returns {string} - Formatted indentation markup
+ */
+function indent(level) {
+  indentation = "";
+  for (i = 0; i < level; i++) indentation += "";
+  return indentation + "- ";
+}
+
+/**
+ * Creates indentation for headers
+ * @param {int} level - The depth level of the block
+ * @returns {string} - Formatted indentation markup
+ */
+function indentHeader(level) {
+  indentation = "##";
+  for (i = 0; i < level; i++) indentation += "#";
+  return indentation + " ";
+}
+</script>
+<script>
+//
+//-------------------------------------------------------------------------------------------------------------
+// USER INTERFACE FOR THE PAGE
+//-------------------------------------------------------------------------------------------------------------
+// This Software was Developed by Daniel Brooke Peig
+// In case of any doubts please contact the developer at www.danbp.org
+// Copyright (c) 2023 Daniel Brooke Peig
+//-------------------------------------------------------------------------------------------------------------
+//
+//
+//
+var originalTitle = document.title;
+var fileCount = 0; //Keep track of the amount of files
+var processedReports = false; //Check if the report was processed or not
+var exportTitle = "";
+
+function readMultiFile(evt) {
+
+	//Clear the statistics
+	document.getElementById('fileCount').innerHTML= "N/A";
+	document.getElementById('folderCount').innerHTML= "N/A";
+	document.getElementById('bookmarkCount').innerHTML= "N/A";
+
+	//Clear the HTML output placeholder
+	document.getElementById('b2mdOutputs').innerHTML= "";
+	document.getElementById('b2mdOutputsTitle').className = "hidden";
+	document.getElementById('b2mdOutputHead').innerHTML = "Source HTML bookmarks";
+
+	//Clear the output placeholder
+	document.getElementById('b2mdMD').innerHTML= "";
+	document.getElementById('b2mdMDTitle').className = "hidden";
+	document.getElementById('b2mdMDHead').innerHTML = "Final Markdown";
+	
+	
+	//Count the files
+	fileCount = evt.target.files.length;
+	
+	//Tracks the file index
+	var fileIndex = 0;
+	
+	//Files object
+	var files = evt.target.files;
+	
+	if(fileCount > 16) alert("Maximum 16 files at once.")
+	else {
+		if (files) {
+		//Display the output box
+		document.getElementById('b2mdOutputsTitle').className = "";
+		
+			for (var i=0, f; f=files[i]; i++) {
+				  var r = new FileReader();
+				  if(exportTitle == "") exportTitle = f.name;
+				r.onload = (function(f) {
+					return function(e) {
+						var contents = e.target.result;
+						fileIndex++;
+					
+						//Create an object holder for the file and then append to the main div object
+						var outputDiv = document.createElement('div');
+						outputDiv.id = 'b2mdOutput'+fileIndex;
+						outputDiv.innerHTML = contents;
+						outputDiv.className = "reportBlock";
+						document.getElementById('b2mdOutputs').appendChild(outputDiv);
+						var outputHR = document.createElement('hr');
+						outputHR.className = "noprint";
+						document.getElementById('b2mdOutputs').appendChild(outputHR);
+		
+					};
+				})(f);
+
+				r.readAsText(f);
+			}   
+		} else {
+			  alert("Failed to load files.");
+			  fileCount = 0;
+		}
+	}
+	processedSources = false;
+  }
+// Load the file
+document.getElementById('fileinput').addEventListener('change', readMultiFile, false);
+
+// Create the change event
+var eVent = new Event('change');
+
+function processHTML(){
+
+//Process each block(file)
+for(var bIndex=1; bIndex<=fileCount; bIndex++) {
+
+//Set the processed reports flag
+processedSources = false;
+
+if(document.getElementById('b2mdOutput'+bIndex).innerHTML.length < 200) {alert("No file contents loaded. Please reload the file.");}
+else if(document.getElementById('b2mdOutput'+bIndex).innerHTML.indexOf("Bookmarks")<0){
+	alert("Sorry, this is not a valid bookmark export file.");
+}
+else if(document.getElementById('b2mdOutput'+bIndex).innerHTML.indexOf("b2md") > 0){
+	if(bIndex == 1) alert("This document was already converted. Please reload the file if you want to convert it again.");
+}
+//Performs the conversions
+else {
+	document.getElementById('b2mdMD').innerHTML += b2md(document.getElementById('b2mdOutput'+bIndex))
+	//Display the output box
+	document.getElementById('b2mdMDTitle').className = "";
+
+	//Calculates statistics	
+	document.getElementById('fileCount').innerHTML= fileCount;
+	let folderCount = 0;
+	let bookmarkCount = 0;
+	let lines = document.getElementById('b2mdMD').innerHTML.split("\n");
+	for (line of lines){
+		if (line.search(/- \[/gm) != -1) bookmarkCount++;
+		if (line.search(/\#\#/gm) != -1) folderCount++;
+	}
+	document.getElementById('folderCount').innerHTML= folderCount;
+	document.getElementById('bookmarkCount').innerHTML= bookmarkCount;
+
+	} //End of else block (after error check)
+} //End of block loop
+
+
+} //End of processHTML
+
+function exportMD(){
+	const link = document.createElement("a");
+         const content = document.getElementById("b2mdMD").innerHTML;
+         const file = new Blob([content], { type: 'text/plain' });
+         link.href = URL.createObjectURL(file);
+         link.download = exportTitle.replace(".html",".md").replace(".htm",".md");
+         link.click();
+         URL.revokeObjectURL(link.href);
+}
+
+function copyMD() {
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(document.getElementById("b2mdMD").innerHTML);
+}
+
+</script>
+<!-- End of your JavaScript code -->
+
+
+<script>
+// JavaScript extra debug code part 2
+//--------------------------------------------------------------------------------------------------------
+console.log("Developed by Daniel Brooke Peig (www.danbp.org)"); //Add final notice
+console.timeEnd("Runtime"); //Stop the script timer
+//--------------------------------------------------------------------------------------------------------
+</script>
+
+</body>
+</html>
