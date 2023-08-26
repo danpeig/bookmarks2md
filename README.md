@@ -1,8 +1,18 @@
 # Browser bookmarks to markdown converter
 
-This free tool converts the bookmarks HTML file exported from browsers (Chrome, Firefox and others) to Markdown (md) format.
+This free tool converts exported bookmarks from web browsers to Markdown (md) format.
 
-It runs from a plain HTML file: no installation, no extensions, no command line, no permissions. Use the same browser you used to create the backup.
+It runs from a plain HTML file: no installation, no extensions, no python, no command line, no permissions. Use the same browser you used to create the backup.
+
+Currently it supports inputs in the HTML format.
+
+## Instructions
+1. From your browser, export bookmarks in the HTML format (menu "Manage bookmarks"->"Export")
+2. Open this tool - 
+[online version here](https://www.danbp.org/bookmarks2md.html).3. Select the files (can be more than one).
+4. Click "Convert"
+5. Check the outputs.
+6. Copy to clipboard or export to MD.
 
 ## Online version
 If you don't want to download any file, there is an [online version here](https://www.danbp.org/bookmarks2md.html).
