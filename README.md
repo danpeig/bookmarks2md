@@ -8,8 +8,8 @@ Currently it supports inputs in the HTML format.
 
 ## Instructions
 1. From your browser, export bookmarks in the HTML format (menu "Manage bookmarks"->"Export")
-2. Open this tool - 
-[online version here](https://www.danbp.org/bookmarks2md.html).3. Select the files (can be more than one).
+2. Open this tool - [online version](https://www.danbp.org/bookmarks2md.html).
+3. Select the HTML files (up to 16 files).
 4. Click "Convert"
 5. Check the outputs.
 6. Copy to clipboard or export to MD.
