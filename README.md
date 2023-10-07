@@ -8,7 +8,7 @@ Currently it supports inputs in the HTML format.
 
 ## Instructions
 1. From your browser, export bookmarks in the HTML format (menu "Manage bookmarks"->"Export")
-2. Open the tool - [optional online version](https://www.danbp.org/bookmarks2md.html), [GitHub hosted version](https://danpeig.github.io/bookmarks2md/bookmarks2md.html)
+2. Open the tool - [optional online version](https://www.danbp.org/bookmarks2md.html), [optional GitHub hosted version](https://danpeig.github.io/bookmarks2md/bookmarks2md.html)
 3. Select the HTML files (up to 16 files).
 4. Click "Convert"
 5. Check the outputs.
