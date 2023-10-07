@@ -15,7 +15,7 @@ Currently it supports inputs in the HTML format.
 6. Copy to clipboard or download the md file.
 
 ## Online version
-If you don't want to download any file, there is an [online version here](https://www.danbp.org/bookmarks2md.html) or [directly from GitHub](https://danpeig.github.io/bookmarks2md/bookmarks2md.html).
+If you don't want to download any file, there is an [online version here](https://www.danbp.org/bookmarks2md.html) and [on GitHub](https://danpeig.github.io/bookmarks2md/bookmarks2md.html).
 
 ## Questions
 The tool is not working as expected? Contact the developer <a href="https://www.danbp.org">Daniel Brooke Peig</a>.
