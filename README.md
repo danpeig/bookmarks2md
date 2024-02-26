@@ -15,10 +15,10 @@ Currently it supports inputs in the HTML format.
 6. Copy to clipboard or download the md file.
 
 ## Online version
-If you don't want to download any file, there is an [online version here](https://www.danbp.org/bookmarks2md.html) and [on GitHub](https://danpeig.github.io/bookmarks2md/bookmarks2md.html).
+If you don't want to download any file, there is an [online version here](https://www.danbp.org/bookmarks2md.html) and [on GitHub](https://danpeig.github.io/bookmarks2md/bookmarks2md.html). Do not worry, no data will be sent to any server.
 
 ## Questions
-The tool is not working as expected? Contact the developer <a href="https://www.danbp.org">Daniel Brooke Peig</a>.
+The tool is not working as expected? Contact the developer <a href="https://www.danbp.org">Daniel BP</a>.
 
 ## Developers
 If you would like to implement the conversion engine into another program or code, you can find the commented JavaScript code inside the index.hml source file. Please note that it requires a DOM object holding the contents of the HTML file.
